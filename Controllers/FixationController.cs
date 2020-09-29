@@ -35,16 +35,21 @@ namespace SpeedFixator.Controllers
 
         [Route("api/fixations/getFixationBySpeedAndDate")]
         [HttpGet]
-        public IActionResult GetFixationBySpeedAndDate([FromHeader]double speed, [FromHeader]DateTime date)
+        public IActionResult GetFixationBySpeedAndDate([FromHeader]double? speed, [FromHeader]DateTime date) //date: ISO8601 format
         {
             _logger.LogInformation($"[request] [GET] GETTING FIXATION WHERE SPEED UPPER: {speed} ; DATE: {date}");
+
+            if (speed == null)
+            {
+                return StatusCode(400);
+            }
 
             TimeSpan startTime = TimeSpan.Parse(this._configuration.GetValue<string>("StartTime"));
             TimeSpan endTime = TimeSpan.Parse(this._configuration.GetValue<string>("EndTime"));
 
             if (DateTime.Now.TimeOfDay > startTime && DateTime.Now.TimeOfDay < endTime)
             {
-                List<Fixation> fixations = _fixationRepository.GetFixationsByDateAndSpeed(date, speed);
+                List<Fixation> fixations = _fixationRepository.GetFixationsByDateAndSpeed(date, speed.Value);
                 return Ok(JsonSerializer.Serialize(fixations));
             }
             return StatusCode(500);
@@ -52,7 +57,7 @@ namespace SpeedFixator.Controllers
 
         [Route("api/fixations/getMaxMinByDate")]
         [HttpGet]
-        public IActionResult GetMaxAndMinSpeedByDate([FromHeader]DateTime date)
+        public IActionResult GetMaxAndMinSpeedByDate([FromHeader]DateTime date) // date: ISO8601 format
         {
             _logger.LogInformation($"[request] [GET] GETTING MAX AND MIN FIXATIONS IN DATE: {date}");
 
