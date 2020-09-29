@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.Json;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -27,11 +28,19 @@ namespace SpeedFixator.Controllers
         [HttpPost]
         public IActionResult AddFixation(Fixation fixation)
         {
-            _logger.LogInformation("[request] FIXATION ADD");
+            _logger.LogInformation("[request] [POST] FIXATION ADD");
             _fixationRepository.Create(fixation);
             return Ok();
         }
 
+        [Route("api/fixations/getFixationBySpeedAndDate")]
+        [HttpGet]
+        public IActionResult GetFixationBySpeedAndDate([FromHeader]double speed, [FromHeader]DateTime date)
+        {
+            _logger.LogInformation($"[request] [GET] GETTING FIXATION WHERE SPEED UPPER: {speed} ; DATE: {date}");
+            List<Fixation> fixations = _fixationRepository.GetFixationsByDateAndSpeed(date, speed);
+            return Ok(JsonSerializer.Serialize(fixations));
+        }
 
     }
 }
