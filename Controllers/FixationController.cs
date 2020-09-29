@@ -23,6 +23,14 @@ namespace SpeedFixator.Controllers
             this._configuration = configuration;
         }
 
+        [Route("api/fixations/add")]
+        [HttpPost]
+        public IActionResult AddFixation(Fixation fixation)
+        {
+            _logger.LogInformation("[request] FIXATION ADD");
+            _fixationRepository.Create(fixation);
+            return Ok();
+        }
 
 
     }
