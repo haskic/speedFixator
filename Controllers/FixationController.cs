@@ -42,5 +42,14 @@ namespace SpeedFixator.Controllers
             return Ok(JsonSerializer.Serialize(fixations));
         }
 
+        [Route("api/fixations/getMaxMinByDate")]
+        [HttpGet]
+        public IActionResult GetMaxAndMinSpeedByDate([FromHeader]DateTime date)
+        {
+            _logger.LogInformation($"[request] [GET] GETTING MAX AND MIN FIXATIONS IN DATE: {date}");
+            List<Fixation> fixations = _fixationRepository.GetMaxAndMinSpeedbyDate(date);
+            return Ok(JsonSerializer.Serialize(fixations));
+        }
+
     }
 }
